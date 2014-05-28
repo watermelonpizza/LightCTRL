@@ -5,14 +5,86 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using Windows.ApplicationModel.Resources;
+using Windows.UI.ViewManagement;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-public class StorageHelper
+public static class Helper
+{
+    public static async void ShowStatusBar()
+    {
+        await StatusBar.GetForCurrentView().ShowAsync();
+    }
+
+    public static async void ShowProgressIndicator(string progressString)
+    {
+        StatusBar.GetForCurrentView().ProgressIndicator.Text = progressString;
+        await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
+        await StatusBar.GetForCurrentView().ShowAsync();
+    }
+
+    public static async void HideProgressIndicator(bool hideStatusBar = false)
+    {
+        await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
+
+        if (hideStatusBar)
+            await StatusBar.GetForCurrentView().HideAsync();
+    }
+}
+
+public static class StorageHelper
 {
     private static Dictionary<string, LifxPanController> panControllers = new Dictionary<string, LifxPanController>();
 
-    private StorageHelper() { }
+    #region Properties
+
+    public static ResourceLoader Strings { get { return ResourceLoader.GetForCurrentView("Strings"); } }
+
+    public static ResourceLoader ErrorMessages { get { return ResourceLoader.GetForCurrentView("Errors"); } }
+
+    public static bool HasStoredLights
+    {
+        get
+        {
+            CheckLoaded();
+            return panControllers.Count > 0 ? true : false;
+        }
+    }
+
+    public static List<LifxPanController> PanControllers
+    {
+        get
+        {
+            CheckLoaded();
+            return new List<LifxPanController>(panControllers.Values);
+        }
+    }
+
+    public static List<LifxBulb> Bulbs
+    {
+        get
+        {
+            CheckLoaded();
+
+            List<LifxBulb> list = new List<LifxBulb>();
+
+            foreach (LifxPanController panCont in panControllers.Values)
+            {
+                list.AddRange(panCont.Bulbs);
+            }
+
+            return list;
+        }
+    }
+
+    #endregion
+
+    private static void CheckLoaded()
+    {
+        if (panControllers.Count < 1)
+            LoadFromStorage();
+    }
 
     public static void LoadFromStorage()
     {
@@ -83,11 +155,37 @@ public class StorageHelper
             }
         }
 
-        return null;
+        throw new BulbNotFoundException(ErrorMessages.GetString("BulbNotFound"));
+    }
+
+    public static LifxBulb GetBulb(string bulbLabel, bool ignoreCase)
+    {
+        CheckLoaded();
+
+        foreach (LifxPanController panController in panControllers.Values)
+        {
+            foreach (LifxBulb bulb in panController.Bulbs)
+            {
+                if (ignoreCase)
+                {
+                    if (bulb.Label.ToUpper() == bulbLabel.ToUpper())
+                        return bulb;
+                }
+                else
+                {
+                    if (bulb.Label == bulbLabel)
+                        return bulb;
+                }
+            }
+        }
+
+        throw new BulbNotFoundException(ErrorMessages.GetString("BulbNotFound"));
     }
 
     public static LifxBulb GetBulb(string bulbLabel)
     {
+        CheckLoaded();
+
         foreach (LifxPanController panController in panControllers.Values)
         {
             foreach (LifxBulb bulb in panController.Bulbs)
@@ -97,11 +195,13 @@ public class StorageHelper
             }
         }
 
-        return null;
+        throw new BulbNotFoundException(ErrorMessages.GetString("BulbNotFound"));
     }
 
     public static List<List<KeyValuePair<Byte[], string>>> GetBulbMap()
     {
+        CheckLoaded();
+
         List<List<KeyValuePair<Byte[], string>>> bulbmap = new List<List<KeyValuePair<byte[], string>>>();
 
         int i = 0;

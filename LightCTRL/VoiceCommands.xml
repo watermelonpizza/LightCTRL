@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VoiceCommands xmlns="http://schemas.microsoft.com/voicecommands/1.1">
+  <CommandSet xml:lang="en-us">
+    <CommandPrefix> Light Control </CommandPrefix>
+    <Example> Turn on my lights </Example>
+
+    <Command Name="ChangeAllLightState">
+      <Example> Turn on my lights </Example>
+      <ListenFor> Turn {LightState} my lights </ListenFor>
+      <Feedback> Turning {LightState} your lights </Feedback>
+      <Navigate Target="VoiceCommandPage.xaml"/>
+    </Command>
+
+    <Command Name="ChangeOneLightState">
+      <Example> Turn on Bedroom </Example>
+      <ListenFor> Turn {LightState} {BulbName} </ListenFor>
+      <Feedback> Turning {LightState} {BulbName} </Feedback>
+      <Navigate Target="VoiceCommandPage.xaml"/>
+    </Command>
+
+    <Command Name="ChangeOneLightStateAlternate">
+      <Example> Turn bedroom on </Example>
+      <ListenFor> Turn {BulbName} {LightState} </ListenFor>
+      <Feedback> Turning {LightState} {BulbName} </Feedback>
+      <Navigate Target="VoiceCommandPage.xaml"/>
+    </Command>
+    
+    <Command Name="ChangeOneLightColour">
+      <Example> Set Kitchen to White </Example>
+      <ListenFor> [Set][Make][Change] {BulbName} [to] {Colour} </ListenFor>
+      <Feedback> Changing {BulbName} to {Colour} </Feedback>
+      <Navigate Target="VoiceCommandPage.xaml"/>
+    </Command>
+    
+    <PhraseList Label="LightState">
+      <Item> on </Item>
+      <Item> off </Item>
+    </PhraseList>
+
+    <PhraseTopic Label="BulbName"/>
+    <PhraseTopic Label="Colour"/>
+
+  </CommandSet>
+
+  <!-- Other CommandSets for other languages -->
+
+</VoiceCommands>

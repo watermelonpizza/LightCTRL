@@ -1,12 +1,16 @@
-﻿using System;
+﻿using LIFX_Net;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +19,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.ViewManagement;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
@@ -35,6 +40,14 @@ namespace LightCTRL_wp
         {
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
+
+            SetupSpeech();
+        }
+
+        private async void SetupSpeech()
+        {
+            var storageFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands.xml"));
+            await Windows.Media.SpeechRecognition.VoiceCommandManager.InstallCommandSetsFromStorageFileAsync(storageFile);
         }
 
         /// <summary>
@@ -91,14 +104,51 @@ namespace LightCTRL_wp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(typeof(SetupPage), e.Arguments))
+                if (StorageHelper.HasStoredLights)
                 {
-                    throw new Exception("Failed to create initial page");
+                    if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
+                    {
+                        throw new Exception("Failed to create initial page");
+                    }
+                }
+                else
+                {
+                    if (!rootFrame.Navigate(typeof(WelcomePage), e.Arguments))
+                    {
+                        throw new Exception("Failed to create initial page");
+                    }
                 }
             }
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            if (args.Kind == Windows.ApplicationModel.Activation.ActivationKind.VoiceCommand)
+            {
+                var commandArgs = args as Windows.ApplicationModel.Activation.VoiceCommandActivatedEventArgs;
+                Windows.Media.SpeechRecognition.SpeechRecognitionResult speechRecognitionResult = commandArgs.Result;
+
+                Frame rootFrame = new Frame();
+                Window.Current.Content = rootFrame;
+                rootFrame.Navigate(typeof(VoiceCommandPage), speechRecognitionResult);
+
+                // Ensure the current window is active
+                Window.Current.Activate();
+
+                //MediaElement me = new MediaElement();
+                
+                //Windows.Media.SpeechSynthesis.SpeechSynthesizer ss = new Windows.Media.SpeechSynthesis.SpeechSynthesizer();
+                
+                //Windows.Media.SpeechSynthesis.SpeechSynthesisStream sis = await ss.SynthesizeSsmlToStreamAsync(Ssml);
+
+                //me.SetSource(sis, sis.ContentType);
+                //me.Play();
+            }
         }
 
         /// <summary>

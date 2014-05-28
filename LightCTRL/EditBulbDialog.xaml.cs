@@ -30,7 +30,7 @@ namespace LightCTRL_wp
             if (String.IsNullOrWhiteSpace(label.Text))
             {
                 args.Cancel = true;
-                body.Text = "Please enter a non empty label";
+                body.Text = StorageHelper.ErrorMessages.GetString("BulbLabelEmpty");
             }
         }
 

@@ -11,6 +11,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Media.SpeechRecognition;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
@@ -26,12 +28,12 @@ namespace LightCTRL_wp
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SetupPage : Page
+    public sealed partial class VoiceCommandPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
 
-        public SetupPage()
+        public VoiceCommandPage()
         {
             this.InitializeComponent();
 
@@ -99,12 +101,71 @@ namespace LightCTRL_wp
         /// </summary>
         /// <param name="e">Provides data for navigation methods and event
         /// handlers that cannot cancel the navigation request.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
 
-            LifxCommunicator.Instance.PanControllerFound += Instance_PanControllerFound;
-            StorageHelper.ClearStorage();
+            SpeechRecognitionResult speechRecognitionResult = e.Parameter as SpeechRecognitionResult;
+
+            string voiceCommandName = speechRecognitionResult.RulePath[0];
+            string navigationTarget = speechRecognitionResult.SemanticInterpretation.Properties["NavigationTarget"][0];
+            IReadOnlyDictionary<string, IReadOnlyList<string>> properties = speechRecognitionResult.SemanticInterpretation.Properties;
+
+            switch (voiceCommandName)
+            {
+                case "ChangeAllLightState":
+                    {
+                        foreach (LifxBulb bulb in StorageHelper.Bulbs)
+                        {
+                            await bulb.SetPowerStateCommand(properties["LightState"][0]);
+                        }
+
+                        App.Current.Exit();
+                    }
+                    break;
+                case "ChaneOneLightState":
+                case "ChangeOneLightStateAlternate":
+                    {
+                        await StorageHelper.GetBulb(properties["BulbName"][0], true)
+                            .SetPowerStateCommand(properties["LightState"][0]);
+
+                        App.Current.Exit();
+                    }
+                    break;
+                case "ChangeOneLightColour":
+                    {
+                        string colourname = properties["Colour"][0].Replace(" ", string.Empty);
+                        string uriString = string.Empty;
+                        UriBuilder uri = null;
+
+                        try
+                        {
+                            await StorageHelper.GetBulb(properties["BulbName"][0], true)
+                                .SetColorCommand(LifxColour.FromRgbColor(colourname), 0);
+
+                            uriString = typeof(VoiceCommandPage).ToString() + "?BulbName=" + properties["BulbName"][0] + "&Colour=" + colourname;
+                            uri = new UriBuilder(uriString);
+                        }
+                        catch (BulbNotFoundException)
+                        {
+                            MessageDialog mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("BulbNotFound_Voice"), "Bulb Not Found");
+                            mbox.ShowAsync();
+                        }
+                        catch (ColorNotFoundException)
+                        {
+                            MessageDialog mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("ColourNotFound_Voice"), "Colour Not Found");
+                            mbox.ShowAsync();
+                        }
+
+                        Frame rootFrame = new Frame();
+                        SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
+                        Window.Current.Content = rootFrame;
+                        rootFrame.Navigate(typeof(MainPage), uri);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -113,39 +174,5 @@ namespace LightCTRL_wp
         }
 
         #endregion
-
-        async void Instance_PanControllerFound(object sender, LifxPanController e)
-        {
-            StorageHelper.StorePanController(e);
-
-            foreach (LifxBulb bulb in e.Bulbs)
-            {
-                LifxLabelMessage labelmessage = await StorageHelper.GetBulb(bulb.UID).GetLabelCommand();
-                if (labelmessage != null)
-                {
-                    StorageHelper.GetBulb(labelmessage.ReceivedData.TargetMac).Label = labelmessage.BulbLabel;
-
-                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                    {
-                        BulbListBox.Items.Add(new ListBoxItem() { Content = (labelmessage.BulbLabel + " - " + LifxHelper.ByteArrayToString(labelmessage.ReceivedData.TargetMac)) as string });
-                    });
-
-                    StorageHelper.SaveToStorage();
-                }
-            }
-        }
-
-
-        private async void StartSearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            StartSearchButton.IsEnabled = false;
-
-            await LifxCommunicator.Instance.Discover();
-        }
-
-        private void NextPageButton_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(MainPage), "SetupScreen");
-        }
     }
 }
