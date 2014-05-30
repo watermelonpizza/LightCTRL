@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Content Dialog item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     public sealed partial class ColourChooserDialog : ContentDialog
     {

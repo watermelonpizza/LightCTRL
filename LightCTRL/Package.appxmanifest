@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="57838MelonStudios.LightCTRL" Publisher="CN=Daniel" Version="0.5.0.0" />
-  <mp:PhoneIdentity PhoneProductId="959b939b-405f-43b0-8417-2327863d4d28" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="57838MelonStudios.LightCTRL" Publisher="CN=AA17C17F-F7F9-48C3-BAB6-C2CE41E18C16" Version="0.5.1.0" />
+  <mp:PhoneIdentity PhoneProductId="da586ef3-7d30-4c63-92ac-17dca5c9b250" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>LightCTRL</DisplayName>
     <PublisherDisplayName>Melon Studios</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>Assets\Icons\Icon_50x50.png</Logo>
   </Properties>
   <Prerequisites>
     <OSMinVersion>6.3.1</OSMinVersion>
@@ -16,10 +16,10 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="LightCTRL.App">
-      <m3:VisualElements DisplayName="LightCTRL" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="LightCTRL is 3rd party windows phone LIFX app to control your LIFX light globes! Turn on and off your bulbs remotely, choose a colour, adjust the brightness, or choose from one of a tonne of built in colours to your liking!" ForegroundText="light" BackgroundColor="transparent">
-        <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png">
+      <m3:VisualElements DisplayName="LightCTRL" Square150x150Logo="Assets\Icons\Icon_150x150.png" Square44x44Logo="Assets\Icons\Icon_44x44.png" Description="LightCTRL is 3rd party windows phone LIFX app to control your LIFX light globes! Turn on and off your bulbs remotely, choose a colour, adjust the brightness, or choose from one of a tonne of built in colours to your liking!" ForegroundText="light" BackgroundColor="transparent">
+        <m3:DefaultTile Wide310x150Logo="Assets\Icons\Icon_310x150.png" Square71x71Logo="Assets\Icons\Icon_71x71.png">
         </m3:DefaultTile>
-        <m3:SplashScreen Image="Assets\SplashScreen.png" />
+        <m3:SplashScreen Image="Assets\Splash\Splash.png" />
         <m3:InitialRotationPreference>
           <m3:Rotation Preference="portrait" />
         </m3:InitialRotationPreference>

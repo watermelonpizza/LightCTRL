@@ -1,7 +1,7 @@
 ﻿using LIFX_Net;
 using LIFX_Net.Messages;
 
-using LightCTRL_wp.Common;
+using LightCTRL.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +23,7 @@ using Windows.Media.SpeechRecognition;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -110,6 +110,8 @@ namespace LightCTRL_wp
             string voiceCommandName = speechRecognitionResult.RulePath[0];
             string navigationTarget = speechRecognitionResult.SemanticInterpretation.Properties["NavigationTarget"][0];
             IReadOnlyDictionary<string, IReadOnlyList<string>> properties = speechRecognitionResult.SemanticInterpretation.Properties;
+            UriBuilder uri = null;
+            MessageDialog mbox = null;
 
             switch (voiceCommandName)
             {
@@ -119,8 +121,6 @@ namespace LightCTRL_wp
                         {
                             await bulb.SetPowerStateCommand(properties["LightState"][0]);
                         }
-
-                        App.Current.Exit();
                     }
                     break;
                 case "ChaneOneLightState":
@@ -128,15 +128,29 @@ namespace LightCTRL_wp
                     {
                         await StorageHelper.GetBulb(properties["BulbName"][0], true)
                             .SetPowerStateCommand(properties["LightState"][0]);
+                    }
+                    break;
+                case "ChangeAllLightColour":
+                    {
+                        string colourname = properties["Colour"][0].Replace(" ", string.Empty);
 
-                        App.Current.Exit();
+                        try
+                        {
+                            foreach (LifxBulb bulb in StorageHelper.Bulbs)
+                            {
+                                await bulb.SetColorCommand(LifxColour.FromRgbColor(colourname), 0);
+                            }
+                        }
+                        catch (ColorNotFoundException)
+                        {
+                            mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("ColourNotFound_Voice"), "Colour Not Found");
+                        }
                     }
                     break;
                 case "ChangeOneLightColour":
                     {
                         string colourname = properties["Colour"][0].Replace(" ", string.Empty);
                         string uriString = string.Empty;
-                        UriBuilder uri = null;
 
                         try
                         {
@@ -148,23 +162,29 @@ namespace LightCTRL_wp
                         }
                         catch (BulbNotFoundException)
                         {
-                            MessageDialog mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("BulbNotFound_Voice"), "Bulb Not Found");
-                            mbox.ShowAsync();
+                            mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("BulbNotFound_Voice"), "Bulb Not Found");
                         }
                         catch (ColorNotFoundException)
                         {
-                            MessageDialog mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("ColourNotFound_Voice"), "Colour Not Found");
-                            mbox.ShowAsync();
+                            mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("ColourNotFound_Voice"), "Colour Not Found");
                         }
-
-                        Frame rootFrame = new Frame();
-                        SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
-                        Window.Current.Content = rootFrame;
-                        rootFrame.Navigate(typeof(MainPage), uri);
                     }
                     break;
                 default:
                     break;
+            }
+
+            if (mbox != null)
+                await mbox.ShowAsync();
+
+            if (StorageHelper.LocalSettings.HasFlag(Settings.CloseOnVoiceCommand))
+                App.Current.Exit();
+            else
+            {
+                Frame rootFrame = new Frame();
+                SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
+                Window.Current.Content = rootFrame;
+                rootFrame.Navigate(typeof(MainPage), uri);
             }
         }
 

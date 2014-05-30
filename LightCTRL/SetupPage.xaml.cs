@@ -1,7 +1,7 @@
 ﻿using LIFX_Net;
 using LIFX_Net.Messages;
 
-using LightCTRL_wp.Common;
+using LightCTRL.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

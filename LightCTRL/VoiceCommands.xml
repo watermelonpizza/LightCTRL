@@ -5,28 +5,35 @@
     <Example> Turn on my lights </Example>
 
     <Command Name="ChangeAllLightState">
-      <Example> Turn on my lights </Example>
+      <Example> turn on my lights </Example>
       <ListenFor> Turn {LightState} my lights </ListenFor>
-      <Feedback> Turning {LightState} your lights </Feedback>
+      <Feedback> Turning {LightState} all your lights </Feedback>
       <Navigate Target="VoiceCommandPage.xaml"/>
     </Command>
 
     <Command Name="ChangeOneLightState">
-      <Example> Turn on Bedroom </Example>
+      <Example> turn on bedroom </Example>
       <ListenFor> Turn {LightState} {BulbName} </ListenFor>
       <Feedback> Turning {LightState} {BulbName} </Feedback>
       <Navigate Target="VoiceCommandPage.xaml"/>
     </Command>
 
     <Command Name="ChangeOneLightStateAlternate">
-      <Example> Turn bedroom on </Example>
+      <Example> turn bedroom on </Example>
       <ListenFor> Turn {BulbName} {LightState} </ListenFor>
       <Feedback> Turning {LightState} {BulbName} </Feedback>
       <Navigate Target="VoiceCommandPage.xaml"/>
     </Command>
+
+    <Command Name="ChangeAllLightColour">
+      <Example> set my lights to blue </Example>
+      <ListenFor> [Set][Make][Change] [my] lights [to] {Colour} </ListenFor>
+      <Feedback> Setting all your lights {Colour} </Feedback>
+      <Navigate Target="VoiceCommandPage.xaml"/>
+    </Command>
     
     <Command Name="ChangeOneLightColour">
-      <Example> Set Kitchen to White </Example>
+      <Example> set kitchen to white </Example>
       <ListenFor> [Set][Make][Change] {BulbName} [to] {Colour} </ListenFor>
       <Feedback> Changing {BulbName} to {Colour} </Feedback>
       <Navigate Target="VoiceCommandPage.xaml"/>

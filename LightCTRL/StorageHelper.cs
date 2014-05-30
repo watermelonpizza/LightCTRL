@@ -4,11 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Xml.Serialization;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.ViewManagement;
 using Windows.Storage;
 using Windows.Storage.Streams;
+
+[Flags]
+public enum Settings
+{
+    FirstRun            = 0,
+    CloseOnVoiceCommand = 1 << 0
+}
 
 public static class Helper
 {
@@ -42,6 +50,26 @@ public static class StorageHelper
     public static ResourceLoader Strings { get { return ResourceLoader.GetForCurrentView("Strings"); } }
 
     public static ResourceLoader ErrorMessages { get { return ResourceLoader.GetForCurrentView("Errors"); } }
+
+    public static Settings LocalSettings
+    {
+        get
+        {
+            object storedsettings;
+            ApplicationData.Current.LocalSettings.Values.TryGetValue("AppSettings", out storedsettings);
+
+            Settings outvalue = Settings.FirstRun;
+
+            if (storedsettings != null)
+                Enum.TryParse(storedsettings.ToString(), out outvalue);
+
+            return outvalue;
+        }
+        set
+        {
+            ApplicationData.Current.LocalSettings.Values["AppSettings"] = Convert.ToUInt64(value);
+        }
+    }
 
     public static bool HasStoredLights
     {
@@ -86,45 +114,45 @@ public static class StorageHelper
             LoadFromStorage();
     }
 
+    private static void SetupBulbPanLink()
+    {
+        foreach (LifxPanController panController in panControllers.Values)
+        {
+            foreach (LifxBulb bulb in panController.Bulbs)
+            {
+                bulb.PanController = GetPanController(bulb.PanControllerMACAddress);
+            }
+        }
+    }
+
     public static void LoadFromStorage()
     {
         panControllers.Clear();
-        XmlSerializer xms = new XmlSerializer(typeof(LifxPanController));
+        XmlSerializer xms = new XmlSerializer(typeof(List<LifxPanController>));
 
-        foreach (string s in ApplicationData.Current.RoamingSettings.Values.Values)
+        string s = ApplicationData.Current.RoamingSettings.Values["PanControllers"] as string;
+
+        if (s != null)
         {
             StringReader sr = new StringReader(s);
-            LifxPanController panController = xms.Deserialize(sr) as LifxPanController;
+            panControllers = (xms.Deserialize(sr) as List<LifxPanController>).ToDictionary(x => x.MACAddress);
 
-            foreach (LifxBulb bulb in panController.Bulbs)
-            {
-                if (bulb.MACAddress == panController.MACAddress)
-                    bulb.PanController = panController;
-            }
-
-            panControllers.Add(panController.MACAddress, panController);
+            SetupBulbPanLink();
         }
     }
 
     public static void SaveToStorage()
     {
-        ClearStorage(true, true, false);
-
         StringWriter sw = new StringWriter();
-        XmlSerializer xms = new XmlSerializer(typeof(LifxPanController));
+        XmlSerializer xms = new XmlSerializer(typeof(List<LifxPanController>));
 
-        foreach (LifxPanController panController in panControllers.Values)
-        {
-            if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(panController.MACAddress))
-            {
-                xms.Serialize(sw, panController);
-                string blah = sw.ToString();
+        xms.Serialize(sw, panControllers.Values.ToList());
+        string blah = sw.ToString();
 
-                ApplicationData.Current.RoamingSettings.Values.Add(panController.MACAddress, sw.ToString());
-            }
-        }
-
-        ApplicationData.Current.LocalSettings.Values.Add(new KeyValuePair<string, object>("FirstRun", false));
+        if (ApplicationData.Current.RoamingSettings.Values.ContainsKey("PanControllers"))
+            ApplicationData.Current.RoamingSettings.Values["PanControllers"] = sw.ToString();
+        else
+            ApplicationData.Current.RoamingSettings.Values.Add("PanControllers", sw.ToString());
     }
 
     public static void ClearStorage(bool localsettings = false, bool roamingsettings = true, bool pancontrollers = false)
@@ -139,9 +167,9 @@ public static class StorageHelper
             panControllers.Clear();
     }
 
-    public static LifxPanController GetPanController(string panControllerUID)
+    public static LifxPanController GetPanController(string panControllerMACAddress)
     {
-        return panControllers[panControllerUID] as LifxPanController;
+        return panControllers[panControllerMACAddress] as LifxPanController;
     }
 
     public static LifxBulb GetBulb(Byte[] bulbUID)

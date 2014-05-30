@@ -23,7 +23,7 @@ using Windows.UI.ViewManagement;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -104,16 +104,16 @@ namespace LightCTRL_wp
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (StorageHelper.HasStoredLights)
+                if (StorageHelper.LocalSettings.HasFlag(Settings.FirstRun) && !StorageHelper.HasStoredLights)
                 {
-                    if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
+                    if (!rootFrame.Navigate(typeof(WelcomePage), e.Arguments))
                     {
                         throw new Exception("Failed to create initial page");
                     }
                 }
                 else
                 {
-                    if (!rootFrame.Navigate(typeof(WelcomePage), e.Arguments))
+                    if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
                     {
                         throw new Exception("Failed to create initial page");
                     }

@@ -14,6 +14,8 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{76F1466A-8B6D-4E39-A767-685A06062A39};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -116,13 +118,25 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icon.png" />
-    <Content Include="Assets\Icon_BW.png" />
-    <Content Include="Assets\Logo.scale-100.png" />
-    <Content Include="Assets\Splash.png" />
-    <Content Include="Assets\SplashScreen.scale-240.png" />
-    <Content Include="Assets\Wide_Icon.png" />
-    <Content Include="Assets\Wide_Icon_BW.png" />
+    <Content Include="Assets\Icons\Icon.png" />
+    <Content Include="Assets\Icons\Icon_120x120.png" />
+    <Content Include="Assets\Icons\Icon_150x150.png" />
+    <Content Include="Assets\Icons\Icon_24x24.png" />
+    <Content Include="Assets\Icons\Icon_310x150.png" />
+    <Content Include="Assets\Icons\Icon_33x33.png" />
+    <Content Include="Assets\Icons\Icon_40x40.png" />
+    <Content Include="Assets\Icons\Icon_44x44.png" />
+    <Content Include="Assets\Icons\Icon_50x50.png" />
+    <Content Include="Assets\Icons\Icon_58x58.png" />
+    <Content Include="Assets\Icons\Icon_70x70.png" />
+    <Content Include="Assets\Icons\Icon_71x71.png" />
+    <Content Include="Assets\Icons\Icon_BW.png" />
+    <Content Include="Assets\Icons\Wide_Icon_BW.png" />
+    <Content Include="Assets\Splash\Splash.scale-240.png" />
+    <Content Include="Assets\Splash\Splash_1152x1920.png" />
+    <Content Include="Assets\Splash\Splash_480x800.png" />
+    <Content Include="Assets\Splash\Splash_672x1120.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="VoiceCommands.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

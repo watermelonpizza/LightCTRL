@@ -1,4 +1,4 @@
-﻿using LightCTRL_wp.Common;
+﻿using LightCTRL.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -114,6 +114,14 @@ namespace LightCTRL_wp
             StorageHelper.ClearStorage(true, true, true);
             MessageDialog mbox = new MessageDialog(StorageHelper.Strings.GetString("ClearStorageSetting"));
             await mbox.ShowAsync();
+        }
+
+        private void CloseOnVoiceToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (((ToggleSwitch)sender).IsOn)
+                StorageHelper.LocalSettings |= Settings.CloseOnVoiceCommand;
+            else
+                StorageHelper.LocalSettings &= ~Settings.CloseOnVoiceCommand; 
         }
     }
 }

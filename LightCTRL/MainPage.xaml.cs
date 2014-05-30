@@ -1,7 +1,7 @@
 ﻿using LIFX_Net;
 using LIFX_Net.Messages;
 
-using LightCTRL_wp.Common;
+using LightCTRL.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
 
-namespace LightCTRL_wp
+namespace LightCTRL
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -331,6 +331,8 @@ namespace LightCTRL_wp
             PowerToggleSwitch.IsOn = psm.PowerState == LifxPowerState.On ? true : false;
 
             (BulbListComboBox.SelectedItem as ComboBoxItem).Content = GetSelectedBulb().Label;
+
+            StorageHelper.SaveToStorage();
 
             Helper.HideProgressIndicator();
         }
