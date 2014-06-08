@@ -117,7 +117,9 @@ namespace LightCTRL
             {
                 case "ChangeAllLightState":
                     {
-                        foreach (LifxBulb bulb in StorageHelper.Bulbs)
+                        StorageHelper.SelectedBulbs = StorageHelper.Bulbs;
+
+                        foreach (LifxBulb bulb in StorageHelper.SelectedBulbs)
                         {
                             await bulb.SetPowerStateCommand(properties["LightState"][0]);
                         }
@@ -126,19 +128,23 @@ namespace LightCTRL
                 case "ChaneOneLightState":
                 case "ChangeOneLightStateAlternate":
                     {
-                        await StorageHelper.GetBulb(properties["BulbName"][0], true)
-                            .SetPowerStateCommand(properties["LightState"][0]);
+                        StorageHelper.SelectedBulb = StorageHelper.GetBulb(properties["BulbName"][0], true);
+                        await StorageHelper.SelectedBulbs[0].SetPowerStateCommand(properties["LightState"][0]);
                     }
                     break;
                 case "ChangeAllLightColour":
                     {
                         string colourname = properties["Colour"][0].Replace(" ", string.Empty);
-
+                        
                         try
                         {
-                            foreach (LifxBulb bulb in StorageHelper.Bulbs)
+                            StorageHelper.SelectedBulbs = StorageHelper.Bulbs;
+                            LifxColour colour = LifxColour.ColorToLifxColour(colourname);
+
+                            foreach (LifxBulb bulb in StorageHelper.SelectedBulbs)
                             {
-                                await bulb.SetColorCommand(LifxColour.FromRgbColor(colourname), 0);
+                                bulb.Colour = colour;
+                                await bulb.SetColorCommand(colour, 0);
                             }
                         }
                         catch (ColorNotFoundException)
@@ -154,11 +160,13 @@ namespace LightCTRL
 
                         try
                         {
-                            await StorageHelper.GetBulb(properties["BulbName"][0], true)
-                                .SetColorCommand(LifxColour.FromRgbColor(colourname), 0);
+                            LifxColour colour = LifxColour.ColorToLifxColour(colourname);
+                            StorageHelper.SelectedBulb = StorageHelper.GetBulb(properties["BulbName"][0], true);
 
-                            uriString = typeof(VoiceCommandPage).ToString() + "?BulbName=" + properties["BulbName"][0] + "&Colour=" + colourname;
-                            uri = new UriBuilder(uriString);
+                            await StorageHelper.SelectedBulbs[0].SetColorCommand(LifxColour.ColorToLifxColour(colourname), 0);
+
+                            //uriString = typeof(VoiceCommandPage).ToString() + "?BulbName=" + properties["BulbName"][0] + "&Colour=" + colourname;
+                            //uri = new UriBuilder(uriString);
                         }
                         catch (BulbNotFoundException)
                         {

@@ -29,7 +29,9 @@
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
             <Button x:Name="ResetCacheButton" Content="clear saved bulbs" HorizontalAlignment="Stretch" Margin="10,0" VerticalAlignment="Top" Height="68" Click="ResetCacheButton_Click"/>
-            <ToggleSwitch x:Name="CloseOnVoiceToggleSwitch" Header="Close app after voice command" HorizontalAlignment="Left" Margin="10,83,0,0" VerticalAlignment="Top" Width="345" OffContent="Stay Open" OnContent="Close" IsOn="True" Toggled="CloseOnVoiceToggleSwitch_Toggled"/>
+            <ToggleSwitch x:Name="CloseOnVoiceToggleSwitch" Header="close app after voice command" Margin="10,83,0,0" VerticalAlignment="Top" OffContent="stay open" OnContent="close" HorizontalAlignment="Left" Width="333"/>
+            <ToggleSwitch x:Name="PivotOnColourChoiceToggleSwitch" Header="navigate on colour choice" Margin="10,153,0,0" VerticalAlignment="Top" OffContent="stay on colour list" OnContent="back to controls" HorizontalAlignment="Left" Width="333"/>
+            <ToggleSwitch x:Name="StartPageToggleSwitch" Header="start on page" Margin="10,223,0,0" VerticalAlignment="Top" OffContent="basic" OnContent="advanced" HorizontalAlignment="Left" Width="333"/>
         </Grid>
     </Grid>
 </Page>

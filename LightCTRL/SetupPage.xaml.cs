@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -120,28 +121,33 @@ namespace LightCTRL
         {
             StorageHelper.StorePanController(e);
 
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                NextPageButton.IsEnabled = true;
-                LooksGoodTextBlock.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                BulbListBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            });
-
             foreach (LifxBulb bulb in e.Bulbs)
             {
-                LifxLabelMessage labelmessage = await StorageHelper.GetBulb(bulb.UID).GetLabelCommand();
-                if (labelmessage != null)
+                LifxLightStatusMessage lightstatusmessage = await StorageHelper.GetBulb(bulb.UID).GetLightStatusCommand();
+                if (lightstatusmessage != null)
                 {
-                    StorageHelper.GetBulb(labelmessage.ReceivedData.TargetMac).Label = labelmessage.BulbLabel;
+                    StorageHelper.GetBulb(lightstatusmessage.ReceivedData.TargetMac).Label = lightstatusmessage.Label;
+                    StorageHelper.GetBulb(lightstatusmessage.ReceivedData.TargetMac).Tags = lightstatusmessage.Tags;
+                    StorageHelper.GetBulb(lightstatusmessage.ReceivedData.TargetMac).IsOn = lightstatusmessage.PowerState;
+                    StorageHelper.GetBulb(lightstatusmessage.ReceivedData.TargetMac).Colour = new LifxColour()
+                    {
+                        Hue = lightstatusmessage.Hue,
+                        Luminosity = lightstatusmessage.Lumnosity,
+                        Saturation = lightstatusmessage.Saturation,
+                        Kelvin = lightstatusmessage.Kelvin
+                    };
 
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        BulbListBox.Items.Add(new ListBoxItem() { Content = (labelmessage.BulbLabel + " - " + LifxHelper.ByteArrayToString(labelmessage.ReceivedData.TargetMac)) as string });
+                        NextPageButton.IsEnabled = true;
+                        LooksGoodTextBlock.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        BulbListBox.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                        BulbListBox.Items.Add(new ListBoxItem() { Content = (lightstatusmessage.Label + " - " + LifxHelper.ByteArrayToString(lightstatusmessage.ReceivedData.TargetMac)) as string });
                     });
-
-                    StorageHelper.SaveToStorage();
                 }
             }
+
+            StorageHelper.SaveToStorage();
 
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
@@ -153,8 +159,22 @@ namespace LightCTRL
         {
             StartSearchButton.IsEnabled = false;
             Helper.ShowProgressIndicator("Searching...");
+            MessageDialog mbox = null;
 
-            await LifxCommunicator.Instance.Discover();
+            try
+            {
+                await LifxCommunicator.Instance.Discover();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                mbox = new MessageDialog(StorageHelper.ErrorMessages.GetString("LocalIPAddressNotFound"), "IP Address Not Found");
+            }
+
+            if (mbox != null)
+            {
+                await mbox.ShowAsync();
+                Helper.HideProgressIndicator();
+            }
         }
 
         private void NextPageButton_Click(object sender, RoutedEventArgs e)
@@ -162,7 +182,7 @@ namespace LightCTRL
             Frame rootFrame = new Frame();
             SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
             Window.Current.Content = rootFrame;
-            rootFrame.Navigate(typeof(MainPage), typeof(SetupPage).ToString());
+            rootFrame.Navigate(typeof(BulbSelector));
         }
     }
 }

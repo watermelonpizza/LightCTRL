@@ -129,6 +129,15 @@
   <data name="ColourNotFound_Voice" xml:space="preserve">
     <value>Oops, look like that colour isn't available or we missheard you</value>
   </data>
+  <data name="EditBulbLabelGroup" xml:space="preserve">
+    <value>Sorry you cannot edit the labels in a group, please select an individual bulb to edit its label</value>
+  </data>
+  <data name="LoadFromStorage" xml:space="preserve">
+    <value>Cannot load from storage</value>
+  </data>
+  <data name="LocalIPAddressNotFound" xml:space="preserve">
+    <value>Looks like we had trouble getting the local IP of your phone. Sorry, cannot continue.</value>
+  </data>
   <data name="PanControllerNotFound" xml:space="preserve">
     <value>Hmm... That pan controller isn't available</value>
   </data>

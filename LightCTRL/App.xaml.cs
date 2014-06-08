@@ -44,6 +44,9 @@ namespace LightCTRL
             SetupSpeech();
         }
 
+        /// <summary>
+        /// Tells the phone where to look for speech commands
+        /// </summary>
         private async void SetupSpeech()
         {
             var storageFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///VoiceCommands.xml"));
@@ -113,7 +116,7 @@ namespace LightCTRL
                 }
                 else
                 {
-                    if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
+                    if (!rootFrame.Navigate(typeof(BulbSelector), e.Arguments))
                     {
                         throw new Exception("Failed to create initial page");
                     }
@@ -124,6 +127,10 @@ namespace LightCTRL
             Window.Current.Activate();
         }
 
+        /// <summary>
+        /// Invoked when the phone is activated by non normal means, including speech
+        /// </summary>
+        /// <param name="args">Arguments detailing how the phone was activated</param>
         protected override void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);
@@ -139,15 +146,6 @@ namespace LightCTRL
 
                 // Ensure the current window is active
                 Window.Current.Activate();
-
-                //MediaElement me = new MediaElement();
-                
-                //Windows.Media.SpeechSynthesis.SpeechSynthesizer ss = new Windows.Media.SpeechSynthesis.SpeechSynthesizer();
-                
-                //Windows.Media.SpeechSynthesis.SpeechSynthesisStream sis = await ss.SynthesizeSsmlToStreamAsync(Ssml);
-
-                //me.SetSource(sis, sis.ContentType);
-                //me.Play();
             }
         }
 

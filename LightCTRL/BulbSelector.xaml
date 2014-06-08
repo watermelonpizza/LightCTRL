@@ -1,0 +1,54 @@
+﻿<Page
+    x:Class="LightCTRL.BulbSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LightCTRL"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.BottomAppBar>
+        <CommandBar ClosedDisplayMode="Compact">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Name="SyncBulbAppBarButton" Label="sync" Icon="Sync" Click="SyncBulbAppBarButton_Click"/>
+            </CommandBar.PrimaryCommands>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="SettingsAppBarButton" Label="settings" Click="SettingsAppBarButton_Click"/>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Panel -->
+        <StackPanel Grid.Row="0" Margin="19,0,0,0">
+            <TextBlock Text="LightCTRL" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+            <TextBlock Text="bulb selector" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+        </StackPanel>
+
+        <!--TODO: Content should be placed within the following grid-->
+        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
+            <ListView x:Name="BulbListView">
+                <!--<ListViewItem Margin="11">
+                    <Grid Width="340">
+
+                        <TextBlock FontSize="23" Foreground="#FF812D2D" SelectionHighlightColor="#FF7A55CF"><Span>Hello</Span></TextBlock>
+                        <Rectangle Fill="#FFFF3838" HorizontalAlignment="Center" Margin="" Height="31" VerticalAlignment="Top" Width="40"/>
+                        <TextBlock FontSize="23" HorizontalAlignment="Right"><Span Foreground="Red">On</Span></TextBlock>
+                    </Grid>
+                </ListViewItem>-->
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

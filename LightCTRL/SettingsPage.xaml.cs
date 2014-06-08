@@ -100,11 +100,27 @@ namespace LightCTRL
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+
+            CloseOnVoiceToggleSwitch.IsOn = StorageHelper.LocalSettings.HasFlag(Settings.CloseOnVoiceCommand);
+            PivotOnColourChoiceToggleSwitch.IsOn = StorageHelper.LocalSettings.HasFlag(Settings.PivotOnColourChoice);
+            StartPageToggleSwitch.IsOn = StorageHelper.LocalSettings.HasFlag(Settings.StartOnAdvanced);
+
+            CloseOnVoiceToggleSwitch.Toggled += CloseOnVoiceToggleSwitch_Toggled;
+            PivotOnColourChoiceToggleSwitch.Toggled += PivotOnColourChoiceToggleSwitch_Toggled;
+            StartPageToggleSwitch.Toggled += StartPageToggleSwitch_Toggled;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedFrom(e);
+
+            if (StorageHelper.LocalSettings.HasFlag(Settings.FirstRun) && !StorageHelper.HasStoredLights)
+            {
+                Frame rootFrame = new Frame();
+                SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
+                Window.Current.Content = rootFrame;
+                rootFrame.Navigate(typeof(WelcomePage));
+            }
         }
 
         #endregion
@@ -118,10 +134,17 @@ namespace LightCTRL
 
         private void CloseOnVoiceToggleSwitch_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((ToggleSwitch)sender).IsOn)
-                StorageHelper.LocalSettings |= Settings.CloseOnVoiceCommand;
-            else
-                StorageHelper.LocalSettings &= ~Settings.CloseOnVoiceCommand; 
+            StorageHelper.SetSetting(Settings.CloseOnVoiceCommand, ((ToggleSwitch)sender).IsOn);
+        }
+
+        private void PivotOnColourChoiceToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            StorageHelper.SetSetting(Settings.PivotOnColourChoice, ((ToggleSwitch)sender).IsOn);
+        }
+
+        private void StartPageToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            StorageHelper.SetSetting(Settings.StartOnAdvanced, ((ToggleSwitch)sender).IsOn);
         }
     }
 }

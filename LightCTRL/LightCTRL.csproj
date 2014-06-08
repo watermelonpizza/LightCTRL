@@ -7,8 +7,8 @@
     <ProjectGuid>{EE4AA6BF-C8C1-46B2-883E-04D57EE66BA0}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LightCTRL_wp</RootNamespace>
-    <AssemblyName>LightCTRL-wp</AssemblyName>
+    <RootNamespace>LightCTRL</RootNamespace>
+    <AssemblyName>LightCTRL</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
@@ -84,6 +84,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BulbSelector.xaml.cs">
+      <DependentUpon>BulbSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ColourChooserDialog.xaml.cs">
       <DependentUpon>ColourChooserDialog.xaml</DependentUpon>
     </Compile>
@@ -118,6 +121,14 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AppbarIcons\appbar.lightbulb.hue.on.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\AppbarIcons\appbar.lightbulb.hue.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\powerIcon.png" />
+    <Content Include="Assets\powerIconOn.png" />
     <Content Include="Assets\Icons\Icon.png" />
     <Content Include="Assets\Icons\Icon_120x120.png" />
     <Content Include="Assets\Icons\Icon_150x150.png" />
@@ -139,6 +150,7 @@
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="VoiceCommands.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="BulbSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ColourChooserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

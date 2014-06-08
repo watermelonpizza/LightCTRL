@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="57838MelonStudios.LightCTRL" Publisher="CN=AA17C17F-F7F9-48C3-BAB6-C2CE41E18C16" Version="0.5.1.0" />
+  <Identity Name="57838MelonStudios.LightCTRL" Publisher="CN=AA17C17F-F7F9-48C3-BAB6-C2CE41E18C16" Version="0.6.0.0" />
   <mp:PhoneIdentity PhoneProductId="da586ef3-7d30-4c63-92ac-17dca5c9b250" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>LightCTRL</DisplayName>

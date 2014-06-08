@@ -7,36 +7,59 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    
     <Page.BottomAppBar>
-        <CommandBar ClosedDisplayMode="Minimal">
-            <AppBarButton x:Name="SyncBulbAppBarButton" Label="sync bulb" Icon="Sync" Click="SyncBulbAppBarButton_Click" IsEnabled="False"/>
-            <AppBarButton x:Name="EditBulbAppBarButton" Label="edit bulb" Icon="Edit" Click="EditBulbAppBarButton_Click" IsEnabled="False"/>
-            <AppBarButton x:Name="SettingsAppBarButton" Label="settings" Icon="Setting" Click="SettingsAppBarButton_Click"/>
+        <CommandBar ClosedDisplayMode="Compact">
+            <CommandBar.PrimaryCommands>
+                <AppBarToggleButton x:Name="FadeColourAppBarButton" Label="fade colour" Icon="SwitchApps"/>
+                <AppBarButton x:Name="BulbControllerAppBarButton" Label="bulbs" Icon="List" Click="BulbControllerAppBarButton_Click"/>
+                <AppBarToggleButton x:Name="PowerStateAppBarToggleButton" Label="power" Checked="PowerStateAppBarToggleButton_Checked" Unchecked="PowerStateAppBarToggleButton_Unchecked">
+                    <AppBarToggleButton.Icon>
+                        <BitmapIcon x:Name="PowerStateAppBarToggleButtonIcon" UriSource="Assets/AppbarIcons/appbar.lightbulb.hue.png"/>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+                <AppBarButton x:Name="SyncBulbAppBarButton" Label="sync bulb" Icon="Sync" Click="SyncBulbAppBarButton_Click" IsEnabled="False"/>
+                <AppBarButton x:Name="EditBulbAppBarButton" Label="edit bulb" Icon="Edit" Click="EditBulbAppBarButton_Click"/>
+            </CommandBar.PrimaryCommands>
             <!-- CommandBar content -->
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="SettingsAppBarButton" Label="settings" Click="SettingsAppBarButton_Click"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
-
-    <Grid x:Name="LayoutRoot">
-        <!-- Title Panel -->
-        <StackPanel Grid.Row="0" Margin="19,0,0,0">
-            <TextBlock Text="main controls" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
-        </StackPanel>
-
-        <Grid>
-            <ToggleSwitch x:Name="PowerToggleSwitch" Header="Power" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Toggled="PowerToggleSwitch_Toggled" Width="171" IsEnabled="False"/>
-            <Slider x:Name="HueSlider" HorizontalAlignment="Left" Margin="109,304,0,0" VerticalAlignment="Top" Width="254" LargeChange="2000" Maximum="65535" Orientation="Horizontal" Height="57" SmallChange="500" ValueChanged="HueSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
-            <Slider x:Name="SaturationSlider" HorizontalAlignment="Left" Margin="109,362,0,0" VerticalAlignment="Top" Width="254" LargeChange="2000" Maximum="65535" SmallChange="500" ValueChanged="SaturationSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
-            <Slider x:Name="LuminositySlider" HorizontalAlignment="Left" Margin="109,422,0,0" VerticalAlignment="Top" Width="254" LargeChange="2000" Maximum="65535" SmallChange="500" ValueChanged="LuminositySlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,314,0,0" TextWrapping="Wrap" Text="Hue" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,372,0,0" TextWrapping="Wrap" Text="Saturation" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,432,0,0" TextWrapping="Wrap" Text="Luminosity" VerticalAlignment="Top" FontSize="16"/>
-            <Slider x:Name="KelvinSlider" HorizontalAlignment="Left" Margin="108,482,0,0" VerticalAlignment="Top" Width="254" LargeChange="2000" Maximum="10000" SmallChange="500" ValueChanged="KelvinSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
-            <TextBlock HorizontalAlignment="Left" Margin="9,492,0,0" TextWrapping="Wrap" Text="Kelvin" VerticalAlignment="Top" FontSize="16"/>
-            <TextBlock HorizontalAlignment="Left" Margin="8,260,0,0" TextWrapping="Wrap" Text="Fade Time" VerticalAlignment="Top" FontSize="16"/>
-            <TextBox x:Name="FadeTimeTextBox" HorizontalAlignment="Left" Margin="109,253,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="253" InputScope="Number" PlaceholderText="fade time in seconds" IsEnabled="False"/>
-            <ComboBox x:Name="BulbListComboBox" Margin="10,85,10,0" VerticalAlignment="Top" PlaceholderText="please select a bulb to control" SelectionChanged="BulbListComboBox_SelectionChanged"/>
-            <Button x:Name="ChooseColourButton" Content="choose colour" HorizontalAlignment="Left" Margin="210,160,0,0" VerticalAlignment="Top" Click="ChooseColourButton_Click" IsEnabled="False" Height="63" Width="159"/>
-        </Grid>
-    </Grid>
+    <Pivot x:Name="MainPivot" Title="LightCTRL" SelectionChanged="MainPivot_SelectionChanged">
+        <PivotItem Header="basic">
+            <Grid>
+            <Image x:Name="LightPowerStateImage" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 50, 0, 0" Height="168" Width="168" Source="Assets/powerIcon.png" Tag="Off" Tapped="LightPowerStateImage_Tapped"  />
+            <Button x:Name="TestButton" HorizontalAlignment="Center" Click="TestButton_Click">Test Button</Button>
+            </Grid>
+        </PivotItem>
+        <PivotItem Header="advanced">
+            <Grid>
+                <!--<ToggleSwitch x:Name="PowerToggleSwitch" Header="Power" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Toggled="PowerToggleSwitch_Toggled" Width="171" IsEnabled="False"/>-->
+                <Slider x:Name="HueSlider" HorizontalAlignment="Left" Margin="0,30,0,0" VerticalAlignment="Top" Width="350" LargeChange="2000" Maximum="65535" Orientation="Horizontal" SmallChange="500" ValueChanged="HueSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
+                <Slider x:Name="SaturationSlider" HorizontalAlignment="Left" Margin="0,110,0,0" VerticalAlignment="Top" Width="350" LargeChange="2000" Maximum="65535" SmallChange="500" ValueChanged="SaturationSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
+                <Slider x:Name="LuminositySlider" HorizontalAlignment="Left" Margin="0,190,0,0" VerticalAlignment="Top" Width="350" LargeChange="2000" Maximum="65535" SmallChange="500" ValueChanged="LuminositySlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
+                <Slider x:Name="KelvinSlider" HorizontalAlignment="Left" Margin="0,270,0,0" VerticalAlignment="Top" Width="350" LargeChange="2000" Maximum="12000" SmallChange="500" ValueChanged="KelvinSlider_ValueChanged" IsEnabled="False" StepFrequency="200"/>
+                <Slider x:Name="FadeTimeSlider" HorizontalAlignment="Left" Margin="0,350,0,0" VerticalAlignment="Top" Width="350" LargeChange="2000" Maximum="500000" SmallChange="500" IsEnabled="False" StepFrequency="200"/>
+                <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="Hue" VerticalAlignment="Top" FontSize="24"/>
+                <TextBlock HorizontalAlignment="Left" Margin="0,80,0,0" TextWrapping="Wrap" Text="Saturation" VerticalAlignment="Top" FontSize="24"/>
+                <TextBlock HorizontalAlignment="Left" Margin="0,160,0,0" TextWrapping="Wrap" Text="Luminosity" VerticalAlignment="Top" FontSize="24"/>
+                <TextBlock HorizontalAlignment="Left" Margin="0,240,0,0" TextWrapping="Wrap" Text="Kelvin" VerticalAlignment="Top" FontSize="24"/>
+                <TextBlock HorizontalAlignment="Left" Margin="0,320,0,0" TextWrapping="Wrap" Text="Fade Time" VerticalAlignment="Top" FontSize="24"/>
+                <!--<Button x:Name="ChooseColourButton" Content="choose colour" HorizontalAlignment="Left" Margin="200,60,0,0" VerticalAlignment="Top" Click="ChooseColourButton_Click" IsEnabled="False" Width="159" Height="63"/>-->
+            </Grid>
+        </PivotItem>
+        <PivotItem Header="colour picker">
+            <ListView x:Name="ColourListView" CanDragItems="True" >
+                <!--<ListViewItem BorderBrush="Red" BorderThickness="4, 0, 4, 0" VerticalContentAlignment="Center">
+                    <Grid>
+                        <Line Stroke="Red" StrokeThickness="4" Y1="15" Y2="15" X2="400" />
+                        <Rectangle Fill="{ThemeResource ContentDialogBackgroundThemeBrush}" HorizontalAlignment="Center" Width="100"/>
+                        <TextBlock FontSize="22" HorizontalAlignment="Center">Hello</TextBlock>
+                    </Grid>
+                </ListViewItem>-->
+            </ListView>
+        </PivotItem>
+    </Pivot>
 </Page>

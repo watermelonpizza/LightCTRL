@@ -10,9 +10,21 @@
     PrimaryButtonText="pick me"  
     SecondaryButtonText="cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
-
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    Resources="{ThemeResource ContentDialogBackgroundThemeBrush}"
+    ScrollViewer.VerticalScrollMode="Enabled">
+    
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <ComboBox x:Name="ColourComboBox" PlaceholderText="choose a colour"/>
+        <CheckBox x:Name="FadeCheckBox" Content="fade to new colour" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <ListView x:Name="ColourListView" CanDragItems="True" ScrollViewer.VerticalScrollMode="Enabled">
+            <!--<ListViewItem BorderBrush="Red" BorderThickness="4, 0, 4, 0" VerticalContentAlignment="Center">
+                <Grid>
+                    <Line Stroke="Red" StrokeThickness="4" Y1="15" Y2="15" X2="400" />
+                    <Rectangle Fill="{ThemeResource ContentDialogBackgroundThemeBrush}" HorizontalAlignment="Center" Width="100"/>
+                    <TextBlock FontSize="22" HorizontalAlignment="Center">Hello</TextBlock>
+                </Grid>
+            </ListViewItem>-->
+        </ListView>
+        <!--<ComboBox x:Name="ColourComboBox" PlaceholderText="choose a colour"/>-->
     </StackPanel>
 </ContentDialog>
